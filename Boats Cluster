@@ -1,0 +1,49 @@
+rm(list = ls())
+
+# Library needed
+library(tidyverse)
+library(modeldata)
+library(ggplot2)
+library(stats)
+library(dplyr)
+library(base)
+library(ggfortify)
+library(cluster)
+library(factoextra)
+library(lme4)
+library(caTools)
+library(caret)
+library(tibble)
+
+# Import the data
+data.721.c = read.csv("D:/FILE/2. Work/Me/6. Study/1. UI-MM-SDM-23/1. Subject/1. SMS 2/1. Business Analytics (3)/Soal _ Latihan Ujian/UTS 2024/Boats_dataset_UTS - Spring 2024.csv")
+
+# Visualizing the data
+ggplot(
+  data.721.c, aes( x = totalHP, y = price, color = numEngines)
+)+
+  geom_point()
+
+# Data description
+summary(data.721.c)
+
+# Scaling the data
+data.721.c.scale = scale(data.721.c)
+
+# Check K
+fviz_nbclust(data.721.c.scale,kmeans,method = 'wss')
+three_cluster = kmeans(data.721.c.scale,3)
+
+# Clustering
+fviz_cluster(three_cluster,data = data.721.c.scale) %>% 
+
+# Adding the cluster column
+data.721.c.after.clus = data.frame(data.721.c,three_cluster$cluster)
+
+# Data description based cluster
+data.721.1 = data.721.c.after.clus %>% 
+  group_by(three_cluster.cluster) %>% 
+  summarise_all('mean')
+
+
+
